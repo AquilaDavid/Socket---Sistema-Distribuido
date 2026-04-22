@@ -12,7 +12,7 @@ public class ClientManager {
         if (clientesAtivos >= LIMITE) {
             try {
                 cliente.getOutputStream().write(
-                        "Servidor lotado. Tente novamente.\n".getBytes()
+                        "Servidor lotado. Tente novamente mais tarde.\n".getBytes()
                 );
                 cliente.close();
             } catch (Exception e) {
@@ -22,11 +22,13 @@ public class ClientManager {
         }
 
         clientesAtivos++;
+        System.out.println("Clientes ativos: " + clientesAtivos + "/" + LIMITE);
 
         new Thread(new ClientHandler(cliente, this)).start();
     }
 
     public synchronized void clienteFinalizado() {
         clientesAtivos--;
+        System.out.println("Vaga liberada. Clientes ativos: " + clientesAtivos + "/" + LIMITE);
     }
 }

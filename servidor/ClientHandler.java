@@ -38,13 +38,12 @@ public class ClientHandler implements Runnable {
                     case "1":
                         saida.println("Digite o primeiro número:");
                         int a = Integer.parseInt(entrada.nextLine());
-                        saida.println("Cliente " + cliente.getInetAddress().getHostAddress() + " foi "+ a);
 
                         saida.println("Digite o segundo número:");
                         int b = Integer.parseInt(entrada.nextLine());
-                        saida.println("numero do cliente " + cliente.getInetAddress().getAddress() + " foi "+ b);
 
-                        saida.println("Resultado: " + (a + b) + "do Cliente: " + cliente.getInetAddress().getHostAddress());
+                        saida.println("Resultado: " + (a + b) +
+                                " | Cliente: " + cliente.getInetAddress().getHostAddress());
                         break;
 
                     case "2":
@@ -54,12 +53,16 @@ public class ClientHandler implements Runnable {
                         saida.println("Digite o segundo número:");
                         int y = Integer.parseInt(entrada.nextLine());
 
-                        saida.println("Resultado: " + (x * y));
+                        saida.println("Resultado: " + (x * y) +
+                                " | Cliente: " + cliente.getInetAddress().getHostAddress());
                         break;
 
                     case "3":
+                        // CORREÇÃO: separado em duas etapas para garantir
+                        // que o prompt chega antes de tentar ler a resposta
                         saida.println("Digite um texto:");
-                        saida.println("Resultado: " + entrada.nextLine().toUpperCase());
+                        String texto = entrada.nextLine();
+                        saida.println("Resultado: " + texto.toUpperCase());
                         break;
 
                     case "4":
@@ -74,14 +77,16 @@ public class ClientHandler implements Runnable {
                         return;
 
                     default:
-                        saida.println("Opção inválida.");
+                        saida.println("Opção inválida. Tente novamente.");
                 }
             }
 
         } catch (Exception e) {
-            System.out.println("Cliente desconectado. foi");
+            System.out.println("Cliente desconectado: " +
+                    cliente.getInetAddress().getHostAddress());
         } finally {
-            manager.clienteFinalizado(); // 🔥 libera vaga
+            // Sempre libera a vaga, com erro ou sem
+            manager.clienteFinalizado();
         }
     }
 }

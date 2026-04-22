@@ -15,18 +15,29 @@ public class Cliente {
             Scanner entrada = new Scanner(socket.getInputStream());
             PrintWriter saida = new PrintWriter(socket.getOutputStream(), true);
 
-            // Thread para receber mensagens do servidor
+            // Thread separada para receber mensagens do servidor
+            // sem bloquear o envio do usuário
             new Thread(() -> {
                 while (entrada.hasNextLine()) {
                     System.out.println(entrada.nextLine());
                 }
             }).start();
 
-            // Enviar dados para o servidor
-            while (true) {
+            // Envia comandos para o servidor
+            while (teclado.hasNextLine()) {
                 String msg = teclado.nextLine();
                 saida.println(msg);
+
+                // CORREÇÃO: encerra o cliente junto quando o usuário digita 0
+                if (msg.equals("0")) {
+                    System.out.println("Encerrando cliente...");
+                    break;
+                }
             }
+
+            teclado.close();
+            saida.close();
+            socket.close();
 
         } catch (Exception e) {
             System.out.println("Erro na conexão com o servidor.");
