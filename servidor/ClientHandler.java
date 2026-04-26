@@ -33,41 +33,65 @@ public class ClientHandler implements Runnable {
 
                 String opcao = entrada.nextLine();
 
+                // 🔥 VALIDAÇÃO DA OPÇÃO
+                if (!opcao.matches("[0-4]")) {
+                    saida.println("Opção inválida! Digite entre 0 e 4.");
+                    continue;
+                }
+
                 switch (opcao) {
 
                     case "1":
                         saida.println("Digite o primeiro número:");
-                        int a = Integer.parseInt(entrada.nextLine());
+                        int a = lerNumero(entrada, saida);
 
                         saida.println("Digite o segundo número:");
-                        int b = Integer.parseInt(entrada.nextLine());
+                        int b = lerNumero(entrada, saida);
 
-                        saida.println("Resultado: " + (a + b) +
-                                " | Cliente: " + cliente.getInetAddress().getHostAddress());
+                        saida.println("Resultado: " + (a + b));
                         break;
 
                     case "2":
                         saida.println("Digite o primeiro número:");
-                        int x = Integer.parseInt(entrada.nextLine());
+                        int x = lerNumero(entrada, saida);
 
                         saida.println("Digite o segundo número:");
-                        int y = Integer.parseInt(entrada.nextLine());
+                        int y = lerNumero(entrada, saida);
 
-                        saida.println("Resultado: " + (x * y) +
-                                " | Cliente: " + cliente.getInetAddress().getHostAddress());
+                        saida.println("Resultado: " + (x * y));
                         break;
 
                     case "3":
-                        // CORREÇÃO: separado em duas etapas para garantir
-                        // que o prompt chega antes de tentar ler a resposta
-                        saida.println("Digite um texto:");
+                        saida.println("Digite um texto (apenas letras):");
                         String texto = entrada.nextLine();
+
+                        if (texto.trim().isEmpty()) {
+                            saida.println("Texto não pode ser vazio.");
+                            continue;
+                        }
+
+                        if (!texto.matches("^[a-zA-ZÀ-ÿ]+$")) {
+                            saida.println("Entrada inválida! Digite apenas letras.");
+                            continue;
+                        }
+
                         saida.println("Resultado: " + texto.toUpperCase());
                         break;
 
                     case "4":
-                        saida.println("Digite um texto:");
+                        saida.println("Digite um texto (apenas letras):");
                         String t = entrada.nextLine();
+
+                        if (t.trim().isEmpty()) {
+                            saida.println("Texto não pode ser vazio.");
+                            continue;
+                        }
+
+                        if (!t.matches("^[a-zA-ZÀ-ÿ]+$")) {
+                            saida.println("Entrada inválida! Digite apenas letras.");
+                            continue;
+                        }
+
                         saida.println("Resultado: " + new StringBuilder(t).reverse());
                         break;
 
@@ -75,9 +99,6 @@ public class ClientHandler implements Runnable {
                         saida.println("Conexão encerrada.");
                         cliente.close();
                         return;
-
-                    default:
-                        saida.println("Opção inválida. Tente novamente.");
                 }
             }
 
@@ -85,8 +106,19 @@ public class ClientHandler implements Runnable {
             System.out.println("Cliente desconectado: " +
                     cliente.getInetAddress().getHostAddress());
         } finally {
-            // Sempre libera a vaga, com erro ou sem
             manager.clienteFinalizado();
+        }
+    }
+
+    // 🔥 MÉTODO DE VALIDAÇÃO DE NÚMERO
+    private int lerNumero(Scanner entrada, PrintWriter saida) {
+        while (true) {
+            try {
+                String valor = entrada.nextLine();
+                return Integer.parseInt(valor);
+            } catch (Exception e) {
+                saida.println("Valor inválido! Digite um número:");
+            }
         }
     }
 }

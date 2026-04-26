@@ -5,8 +5,6 @@ import java.net.Socket;
 
 public class Main {
 
-    // CORREÇÃO: volatile garante que todas as threads
-    // enxergam o valor atualizado imediatamente
     public static volatile boolean rodando = true;
 
     public static void main(String[] args) throws Exception {
@@ -17,8 +15,6 @@ public class Main {
 
         ClientManager manager = new ClientManager();
 
-        // CORREÇÃO: usa a classe PainelControle que foi criada
-        // em vez de duplicar a lógica aqui inline
         new Thread(new PainelControle(servidor, manager)).start();
 
         while (rodando) {
@@ -32,7 +28,6 @@ public class Main {
 
             } catch (Exception e) {
                 if (rodando) e.printStackTrace();
-                // se !rodando, a exceção é esperada (ServerSocket foi fechado)
             }
         }
 
