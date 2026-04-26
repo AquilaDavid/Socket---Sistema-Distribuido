@@ -15,13 +15,13 @@ public class Main {
 
         ClientManager manager = new ClientManager();
 
-        new Thread(new PainelControle(servidor, manager)).start();
+        new Thread(new PainelControle(servidor)).start();
 
         while (rodando) {
             try {
                 Socket cliente = servidor.accept();
 
-                System.out.println("Nova conexão: " +
+                System.out.println("[SERVIDOR] Nova conexão: " +
                         cliente.getInetAddress().getHostAddress());
 
                 manager.executar(cliente);

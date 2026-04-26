@@ -6,11 +6,9 @@ import java.util.Scanner;
 public class PainelControle implements Runnable {
 
     private ServerSocket servidor;
-    private ClientManager manager;
 
-    public PainelControle(ServerSocket servidor, ClientManager manager) {
+    public PainelControle(ServerSocket servidor) {
         this.servidor = servidor;
-        this.manager = manager;
     }
 
     @Override
@@ -22,7 +20,7 @@ public class PainelControle implements Runnable {
             String comando = teclado.nextLine();
 
             if (comando.equals("0")) {
-                System.out.println("Encerrando servidor...");
+                System.out.println("[SERVIDOR] Encerrando...");
                 Main.rodando = false;
 
                 try {

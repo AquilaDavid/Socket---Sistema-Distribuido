@@ -17,9 +17,14 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
 
+        // 🔥 IDENTIFICADOR ÚNICO (IP + PORTA)
+        String idCliente = cliente.getInetAddress().getHostAddress() + ":" + cliente.getPort();
+
         try {
             Scanner entrada = new Scanner(cliente.getInputStream());
             PrintWriter saida = new PrintWriter(cliente.getOutputStream(), true);
+
+            log(idCliente, "Conectado");
 
             while (true) {
 
@@ -32,10 +37,11 @@ public class ClientHandler implements Runnable {
                 saida.println("================");
 
                 String opcao = entrada.nextLine();
+                log(idCliente, "Opção escolhida: " + opcao);
 
-                // 🔥 VALIDAÇÃO DA OPÇÃO
                 if (!opcao.matches("[0-4]")) {
-                    saida.println("Opção inválida! Digite entre 0 e 4.");
+                    saida.println("Opção inválida!");
+                    log(idCliente, "Erro: opção inválida");
                     continue;
                 }
 
@@ -43,82 +49,90 @@ public class ClientHandler implements Runnable {
 
                     case "1":
                         saida.println("Digite o primeiro número:");
-                        int a = lerNumero(entrada, saida);
+                        int a = lerNumero(entrada, saida, idCliente, "A");
 
                         saida.println("Digite o segundo número:");
-                        int b = lerNumero(entrada, saida);
+                        int b = lerNumero(entrada, saida, idCliente, "B");
 
-                        saida.println("Resultado: " + (a + b));
+                        int soma = a + b;
+                        saida.println("Resultado: " + soma);
+                        log(idCliente, "Soma: " + a + " + " + b + " = " + soma);
                         break;
 
                     case "2":
                         saida.println("Digite o primeiro número:");
-                        int x = lerNumero(entrada, saida);
+                        int x = lerNumero(entrada, saida, idCliente, "X");
 
                         saida.println("Digite o segundo número:");
-                        int y = lerNumero(entrada, saida);
+                        int y = lerNumero(entrada, saida, idCliente, "Y");
 
-                        saida.println("Resultado: " + (x * y));
+                        int mult = x * y;
+                        saida.println("Resultado: " + mult);
+                        log(idCliente, "Multiplicação: " + x + " * " + y + " = " + mult);
                         break;
 
                     case "3":
-                        saida.println("Digite um texto (apenas letras):");
+                        saida.println("Digite um texto (letras e espaços):");
                         String texto = entrada.nextLine();
+                        log(idCliente, "Texto recebido: " + texto);
 
-                        if (texto.trim().isEmpty()) {
-                            saida.println("Texto não pode ser vazio.");
+                        if (texto.trim().isEmpty() || !texto.matches("^[a-zA-ZÀ-ÿ ]+$")) {
+                            saida.println("Entrada inválida!");
+                            log(idCliente, "Erro: texto inválido");
                             continue;
                         }
 
-                        if (!texto.matches("^[a-zA-ZÀ-ÿ]+$")) {
-                            saida.println("Entrada inválida! Digite apenas letras.");
-                            continue;
-                        }
-
-                        saida.println("Resultado: " + texto.toUpperCase());
+                        String upper = texto.toUpperCase();
+                        saida.println("Resultado: " + upper);
+                        log(idCliente, "Maiúsculo: " + upper);
                         break;
 
                     case "4":
-                        saida.println("Digite um texto (apenas letras):");
+                        saida.println("Digite um texto (letras e espaços):");
                         String t = entrada.nextLine();
+                        log(idCliente, "Texto recebido: " + t);
 
-                        if (t.trim().isEmpty()) {
-                            saida.println("Texto não pode ser vazio.");
+                        if (t.trim().isEmpty() || !t.matches("^[a-zA-ZÀ-ÿ ]+$")) {
+                            saida.println("Entrada inválida!");
+                            log(idCliente, "Erro: texto inválido");
                             continue;
                         }
 
-                        if (!t.matches("^[a-zA-ZÀ-ÿ]+$")) {
-                            saida.println("Entrada inválida! Digite apenas letras.");
-                            continue;
-                        }
-
-                        saida.println("Resultado: " + new StringBuilder(t).reverse());
+                        String invertido = new StringBuilder(t).reverse().toString();
+                        saida.println("Resultado: " + invertido);
+                        log(idCliente, "Invertido: " + invertido);
                         break;
 
                     case "0":
                         saida.println("Conexão encerrada.");
+                        log(idCliente, "Desconectou");
                         cliente.close();
                         return;
                 }
             }
 
         } catch (Exception e) {
-            System.out.println("Cliente desconectado: " +
-                    cliente.getInetAddress().getHostAddress());
+            log(idCliente, "Desconectado inesperadamente");
         } finally {
-            manager.clienteFinalizado();
+            manager.clienteFinalizado(idCliente);
         }
     }
 
-    // 🔥 MÉTODO DE VALIDAÇÃO DE NÚMERO
-    private int lerNumero(Scanner entrada, PrintWriter saida) {
+    private int lerNumero(Scanner entrada, PrintWriter saida, String idCliente, String nome) {
         while (true) {
             try {
                 String valor = entrada.nextLine();
-                return Integer.parseInt(valor);
+                int numero = Integer.parseInt(valor);
+                log(idCliente, nome + ": " + numero);
+                return numero;
             } catch (Exception e) {
-                saida.println("Valor inválido! Digite um número:");
+                saida.println("Digite um número válido:");
+                log(idCliente, "Erro: número inválido");
             }
         }
+    }
+
+    private void log(String id, String msg) {
+        System.out.println("[" + id + "] " + msg);
     }
 }
