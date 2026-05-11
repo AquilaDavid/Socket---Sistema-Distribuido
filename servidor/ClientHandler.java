@@ -17,7 +17,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
 
-        // 🔥 IDENTIFICADOR ÚNICO (IP + PORTA)
+        //IDENTIFICADOR ÚNICO (IP + PORTA)
         String idCliente = cliente.getInetAddress().getHostAddress() + ":" + cliente.getPort();
 
         try {

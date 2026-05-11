@@ -1,7 +1,7 @@
 import socket
 import threading
 
-HOST = "localhost"
+HOST = "10.10.136.173"
 PORT = 12345
 
 try:
@@ -10,7 +10,7 @@ try:
 
     print("Conectado ao servidor!")
 
-    # 🔥 Thread para RECEBER mensagens (igual ao Java)
+    
     def receber():
         while True:
             try:
@@ -24,7 +24,7 @@ try:
     thread_receber = threading.Thread(target=receber)
     thread_receber.start()
 
-    # 🔥 Loop para ENVIAR mensagens (igual ao teclado do Java)
+    
     while True:
         msg = input()
         cliente.sendall((msg + "\n").encode())

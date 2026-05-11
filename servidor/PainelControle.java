@@ -6,9 +6,11 @@ import java.util.Scanner;
 public class PainelControle implements Runnable {
 
     private ServerSocket servidor;
+    private ServerController controller;
 
-    public PainelControle(ServerSocket servidor) {
+    public PainelControle(ServerSocket servidor, ServerController controller) {
         this.servidor = servidor;
+        this.controller = controller;
     }
 
     @Override
@@ -16,12 +18,12 @@ public class PainelControle implements Runnable {
 
         Scanner teclado = new Scanner(System.in);
 
-        while (Main.rodando) {
+        while (controller.isRunning()) {
             String comando = teclado.nextLine();
 
             if (comando.equals("0")) {
                 System.out.println("[SERVIDOR] Encerrando...");
-                Main.rodando = false;
+                controller.stop();
 
                 try {
                     servidor.close();

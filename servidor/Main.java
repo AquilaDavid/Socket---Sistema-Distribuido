@@ -5,7 +5,7 @@ import java.net.Socket;
 
 public class Main {
 
-    public static volatile boolean rodando = true;
+    private static ServerController controller = new ServerController();
 
     public static void main(String[] args) throws Exception {
 
@@ -15,9 +15,9 @@ public class Main {
 
         ClientManager manager = new ClientManager();
 
-        new Thread(new PainelControle(servidor)).start();
+        new Thread(new PainelControle(servidor, controller)).start();
 
-        while (rodando) {
+        while (controller.isRunning()) {
             try {
                 Socket cliente = servidor.accept();
 
@@ -27,7 +27,7 @@ public class Main {
                 manager.executar(cliente);
 
             } catch (Exception e) {
-                if (rodando) e.printStackTrace();
+                if (controller.isRunning()) e.printStackTrace();
             }
         }
 
